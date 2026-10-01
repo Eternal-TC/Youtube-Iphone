@@ -122,7 +122,16 @@ jobs:
           ./theos-jailed/install
         env:
           THEOS: ${{ github.workspace }}/theos
-        
+
+      - name: Link YouTubeHeader into Theos
+        run: |
+          # YTPlaybackFix looks for YouTubeHeader (and GPBMessage.h) in $THEOS/include/YouTubeHeader
+          mkdir -p "$THEOS/include"
+          rm -rf "$THEOS/include/YouTubeHeader"
+          ln -s "${{ github.workspace }}/Tweaks/YouTubeHeader" "$THEOS/include/YouTubeHeader"
+        env:
+          THEOS: ${{ github.workspace }}/theos
+
       - name: Fix Compiling
         run: |
           # Update GNU Make to allow for faster building
