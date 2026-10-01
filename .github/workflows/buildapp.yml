@@ -31,6 +31,11 @@ on:
         default: "5.2b4"
         required: true
         type: string
+      safari_extension:
+        description: "Include the Open in YouTube Safari extension (fails to sideload with free Apple IDs)"
+        default: false
+        required: false
+        type: boolean
       commit_id:
         description: "(Optional) Commit ID to build at"
         default: ""
@@ -164,8 +169,13 @@ jobs:
           filepath = 'tmp/Payload/YouTube.app/Info.plist'
           remove_uisupporteddevices(filepath)
           EOF
-          # Manually install the Open in YouTube extension
-          cp -R Extensions/*.appex tmp/Payload/YouTube.app/PlugIns
+          # Optionally install the Open in YouTube extension. Its App ID is derived
+          # from com.google.ios.youtube, which sideloading tools can't register.
+          if [ "${{ inputs.safari_extension }}" = "true" ]; then
+            cp -R Extensions/*.appex tmp/Payload/YouTube.app/PlugIns
+          else
+            rm -rf Extensions/*.appex
+          fi
         env:
           THEOS: ${{ github.workspace }}/theos
           YOUTUBE_URL: ${{ env.URL_YT }}
