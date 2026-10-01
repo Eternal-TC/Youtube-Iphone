@@ -263,20 +263,9 @@ BOOL isTabSelected = NO;
 
 // YTNoModernUI - @arichornlover
 %group gYTNoModernUI
-%hook YTVersionUtils // YTNoModernUI Original Version
-+ (NSString *)appVersion { return @"17.38.10"; }
-%end
-
-%hook YTSettingsCell // Remove v17.38.10 Version Number - @Dayanch96
-- (void)setDetailText:(id)arg1 {
-    NSDictionary *infoDictionary = [[NSBundle mainBundle] infoDictionary];
-    NSString *appVersion = infoDictionary[@"CFBundleShortVersionString"];
-
-    if ([arg1 isEqualToString:@"17.38.10"]) {
-        arg1 = appVersion;
-    } %orig(arg1);
-}
-%end
+// The YTVersionUtils spoof to v17.38.10 was removed: YouTube now rejects
+// clients that old and shows an "Update available" prompt. Use the
+// Version Spoofer (Lite) setting instead if a different version is needed.
 
 %hook YTInlinePlayerBarContainerView // Red Progress Bar - YTNoModernUI
 - (id)quietProgressBarColor {

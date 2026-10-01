@@ -10,6 +10,7 @@
 #import "../Tweaks/YouTubeHeader/YTUIUtils.h"
 #import "../Tweaks/YouTubeHeader/YTSettingsPickerViewController.h"
 #import "SettingsKeys.h"
+#import "VersionSpooferLite.h"
 // #import "AppIconOptionsController.h"
 
 
@@ -40,9 +41,6 @@
 
 static int contrastMode() {
     return [[NSUserDefaults standardUserDefaults] integerForKey:@"lcm"];
-}
-static int appVersionSpoofer() {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:@"versionSpoofer"];
 }
 
 @interface YTSettingsSectionItemManager (YTLitePlus)
@@ -489,70 +487,19 @@ static const NSInteger YTLiteSection = 789;
     YTSettingsSectionItem *versionSpooferSection = [YTSettingsSectionItemClass itemWithTitle:LOC(@"VERSION_SPOOFER_TITLE")
         accessibilityIdentifier:nil
         detailTextBlock:^NSString *() {
-            switch (appVersionSpoofer()) {
-                case 1:
-                    return @"v18.34.5 (Enable Library Tab)";
-                case 2:
-                    return @"v18.33.3 (Removes Playables)";
-                case 3:
-                    return @"v18.18.2 (Fixes YTClassicVideoQuality & YTSpeed)";
-                case 4:
-                    return @"v18.01.2 (First v18 Version)";
-                case 5:
-                    return @"v17.49.6 (Removes Rounded Miniplayer)";
-                case 6:
-                    return @"v17.38.10 (Fixes LowContrastMode)";
-                case 7:
-                    return @"v17.33.2 (Oldest Supported Version)";
-                case 0:
-                default:
-                    return @"v18.49.3 (Last v18 Version)";
-            }
+            return versionSpooferEntries[versionSpooferSelectedIndex()].title;
         }
         selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
-            NSArray <YTSettingsSectionItem *> *rows = @[
-                [YTSettingsSectionItemClass checkmarkItemWithTitle:@"v18.49.3 (Last v18 Version)" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
-                    [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"versionSpoofer"];
+            NSMutableArray <YTSettingsSectionItem *> *rows = [NSMutableArray array];
+            for (NSUInteger i = 0; i < versionSpooferEntryCount; i++) {
+                NSString *appVersion = versionSpooferEntries[i].appVersion;
+                [rows addObject:[YTSettingsSectionItemClass checkmarkItemWithTitle:versionSpooferEntries[i].title titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
+                    [[NSUserDefaults standardUserDefaults] setObject:appVersion forKey:kVersionSpooferTargetKey];
                     [settingsViewController reloadData];
                     return YES;
-                }],
-                [YTSettingsSectionItemClass checkmarkItemWithTitle:@"v18.34.5 (Enable Library Tab)" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
-                    [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"versionSpoofer"];
-                    [settingsViewController reloadData];
-                    return YES;
-                }],
-                [YTSettingsSectionItemClass checkmarkItemWithTitle:@"v18.33.3 (Removes Playables)" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
-                    [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"versionSpoofer"];
-                    [settingsViewController reloadData];
-                    return YES;
-                }],
-                [YTSettingsSectionItemClass checkmarkItemWithTitle:@"v18.18.2 (Fixes YTClassicVideoQuality & YTSpeed)" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
-                    [[NSUserDefaults standardUserDefaults] setInteger:3 forKey:@"versionSpoofer"];
-                    [settingsViewController reloadData];
-                    return YES;
-                }],
-                [YTSettingsSectionItemClass checkmarkItemWithTitle:@"v18.01.2 (First v18 Version)" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
-                    [[NSUserDefaults standardUserDefaults] setInteger:4 forKey:@"versionSpoofer"];
-                    [settingsViewController reloadData];
-                    return YES;
-                }],
-                [YTSettingsSectionItemClass checkmarkItemWithTitle:@"v17.49.6 (Removes Rounded Miniplayer)" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
-                    [[NSUserDefaults standardUserDefaults] setInteger:5 forKey:@"versionSpoofer"];
-                    [settingsViewController reloadData];
-                    return YES;
-                }],
-                [YTSettingsSectionItemClass checkmarkItemWithTitle:@"v17.38.10 (Fixes LowContrastMode)" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
-                    [[NSUserDefaults standardUserDefaults] setInteger:6 forKey:@"versionSpoofer"];
-                    [settingsViewController reloadData];
-                    return YES;
-                }],
-                [YTSettingsSectionItemClass checkmarkItemWithTitle:@"v17.33.2 (Oldest Supported Version)" titleDescription:nil selectBlock:^BOOL (YTSettingsCell *cell, NSUInteger arg1) {
-                    [[NSUserDefaults standardUserDefaults] setInteger:7 forKey:@"versionSpoofer"];
-                    [settingsViewController reloadData];
-                    return YES;
-                }]
-            ];
-            YTSettingsPickerViewController *picker = [[%c(YTSettingsPickerViewController) alloc] initWithNavTitle:@"VERSION_SPOOFER_TITLE" pickerSectionTitle:nil rows:rows selectedItemIndex:appVersionSpoofer() parentResponder:[self parentResponder]];
+                }]];
+            }
+            YTSettingsPickerViewController *picker = [[%c(YTSettingsPickerViewController) alloc] initWithNavTitle:LOC(@"VERSION_SPOOFER_TITLE") pickerSectionTitle:nil rows:rows selectedItemIndex:versionSpooferSelectedIndex() parentResponder:[self parentResponder]];
             [settingsViewController pushViewController:picker];
             return YES;
         }];
