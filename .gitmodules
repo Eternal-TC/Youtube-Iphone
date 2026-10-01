@@ -47,3 +47,7 @@
 	path = Tweaks/FLEXing
 	url = https://github.com/PoomSmart/FLEXing.git
 	branch = rootless
+[submodule "Tweaks/YTPlaybackFix"]
+	path = Tweaks/YTPlaybackFix
+	url = https://github.com/Mark02-2012/YTPlaybackFix.git
+	branch = main
